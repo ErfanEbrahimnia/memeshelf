@@ -1,5 +1,5 @@
-import { AuthSectionPlaceholder } from "@/app/_components/AuthSection";
-import { AuthSectionWithProviders } from "@/app/_components/AuthSectionWithProviders";
+import { AuthSectionPlaceholder } from "@/app/_components/auth/AuthSection";
+import { AuthSectionWithProviders } from "@/app/_components/auth/AuthSectionWithProviders";
 import { Suspense } from "react";
 
 export default function Home() {

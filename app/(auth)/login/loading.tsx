@@ -1,4 +1,4 @@
-import { AuthSectionPlaceholder } from "@/app/_components/AuthSection";
+import { AuthSectionPlaceholder } from "@/app/_components/auth/AuthSection";
 
 export default function LoginLoading() {
   return (

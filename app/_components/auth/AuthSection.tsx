@@ -13,7 +13,7 @@ export function AuthSection() {
   if (isAuthenticated) {
     return (
       <Link
-        href="/app"
+        href="/my-shelf"
         className="flex h-12 w-full max-w-xs items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
       >
         Go to your shelf
