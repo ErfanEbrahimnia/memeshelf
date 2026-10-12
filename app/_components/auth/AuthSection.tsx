@@ -12,10 +12,7 @@ export function AuthSection() {
 
   if (isAuthenticated) {
     return (
-      <Link
-        href="/my-shelf"
-        className="flex h-12 w-full max-w-xs items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
-      >
+      <Link href="/my-shelf" className="btn w-full max-w-xs">
         Go to your shelf
       </Link>
     );
@@ -23,7 +20,7 @@ export function AuthSection() {
 
   return (
     <section
-      className="flex w-full max-w-xs flex-col gap-3"
+      className="flex w-full max-w-xs flex-col"
       aria-label="Authentication"
     >
       <GoogleSignInOption />
@@ -34,7 +31,7 @@ export function AuthSection() {
 export function AuthSectionPlaceholder() {
   return (
     <span
-      className="flex h-12 items-center justify-center rounded-full bg-foreground/70 px-5 text-sm text-background"
+      className="btn btn-disabled w-full max-w-xs"
       aria-busy="true"
     >
       Loading…
@@ -48,7 +45,7 @@ function GoogleSignInOption() {
   return (
     <button
       type="button"
-      className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
+      className="btn w-full"
       onClick={() => void signIn("google")}
     >
       Sign in with Google

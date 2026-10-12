@@ -2,11 +2,12 @@ import { SignOutButton } from "@/app/_components/auth/SignOutButton";
 
 export default function MyShelfPage() {
   return (
-    <div>
-      <p className="text-lg text-zinc-800 dark:text-zinc-200">
-        Hello World (Authenticated)
-      </p>
-      <SignOutButton />
-    </div>
+    <main className="flex flex-1 flex-col gap-4 p-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-semibold">My shelf</h1>
+        <SignOutButton />
+      </div>
+      <p>Hello World (Authenticated)</p>
+    </main>
   );
 }
