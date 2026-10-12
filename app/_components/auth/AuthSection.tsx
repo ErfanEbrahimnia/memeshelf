@@ -12,7 +12,7 @@ export function AuthSection() {
 
   if (isAuthenticated) {
     return (
-      <Link href="/my-shelf" className="btn w-full max-w-xs">
+      <Link href="/my-shelf" className="w-full max-w-xs text-center">
         Go to your shelf
       </Link>
     );
@@ -30,10 +30,7 @@ export function AuthSection() {
 
 export function AuthSectionPlaceholder() {
   return (
-    <span
-      className="btn btn-disabled w-full max-w-xs"
-      aria-busy="true"
-    >
+    <span className="w-full max-w-xs text-center" aria-busy="true">
       Loading…
     </span>
   );
@@ -45,7 +42,7 @@ function GoogleSignInOption() {
   return (
     <button
       type="button"
-      className="btn w-full"
+      className="w-full"
       onClick={() => void signIn("google")}
     >
       Sign in with Google
