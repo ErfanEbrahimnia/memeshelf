@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
-import { SiteHeader } from "@/app/_components/SiteHeader";
 import { ThemeProvider } from "@/app/_components/ThemeProvider";
 import { cn } from "@/lib/utils";
 
@@ -43,7 +42,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           attribute="class"
           defaultTheme="system"
         >
-          <SiteHeader />
           {children}
         </ThemeProvider>
       </body>
