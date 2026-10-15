@@ -18,8 +18,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Switch } from "@/components/ui/switch";
+} from "@/components/ui/DropdownMenu";
+import { Switch } from "@/components/ui/Switch";
 
 export function UserMenu() {
   const router = useRouter();
