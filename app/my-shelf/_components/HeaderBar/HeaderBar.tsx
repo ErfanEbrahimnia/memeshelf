@@ -4,7 +4,7 @@ import { UserMenu } from "./UserMenu";
 
 export function HeaderBar() {
   return (
-    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md">
+    <header className="sticky top-0 bg-background/80 backdrop-blur-md">
       <div className="relative mx-auto flex w-full items-center px-4 py-5 sm:px-6">
         <Link
           href="/"
@@ -17,7 +17,7 @@ export function HeaderBar() {
             <HeaderSearch />
           </div>
         </div>
-        <div className="relative ml-auto">
+        <div className="relative ml-auto flex items-center justify-center">
           <UserMenu />
         </div>
       </div>

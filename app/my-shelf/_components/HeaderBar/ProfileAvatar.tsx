@@ -18,7 +18,7 @@ export function ProfileAvatar({
       {showImage && (
         <AvatarImage src={imageUrl} alt={alt} referrerPolicy="no-referrer" />
       )}
-      <AvatarFallback>
+      <AvatarFallback className="size-9">
         <User className="size-4 text-muted-foreground" aria-hidden />
       </AvatarFallback>
     </Avatar>
