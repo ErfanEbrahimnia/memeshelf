@@ -14,3 +14,11 @@ export async function getAuthUser(ctx: AuthCtx): Promise<Doc<"users"> | null> {
 
   return ctx.db.get("users", userId);
 }
+
+export async function requireAuthUser(ctx: AuthCtx): Promise<Doc<"users">> {
+  const user = await getAuthUser(ctx);
+  if (!user) {
+    throw new Error("Not authenticated");
+  }
+  return user;
+}

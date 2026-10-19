@@ -9,13 +9,28 @@ const imageAccept = {
   "image/*": [],
 };
 
-export function FullscreenDropzone({ children }: { children: ReactNode }) {
-  const onDropAccepted = useCallback((acceptedFiles: File[]) => {
-    console.log("Dropped files:", acceptedFiles);
-  }, []);
+type FullscreenDropzoneProps = {
+  children: ReactNode;
+  onUploadFiles?: (files: File[]) => void | Promise<void>;
+  disabled?: boolean;
+};
+
+export function FullscreenDropzone({
+  children,
+  onUploadFiles,
+  disabled = false,
+}: FullscreenDropzoneProps) {
+  const onDropAccepted = useCallback(
+    (acceptedFiles: File[]) => {
+      if (disabled || acceptedFiles.length === 0) return;
+      onUploadFiles?.(acceptedFiles);
+    },
+    [disabled, onUploadFiles]
+  );
 
   const onDragStartCapture = useCallback((event: DragEvent<HTMLDivElement>) => {
     const target = event.target;
+
     if (!(target instanceof Element)) return;
     if (target instanceof HTMLImageElement || target.closest("img")) {
       event.preventDefault();
@@ -24,6 +39,7 @@ export function FullscreenDropzone({ children }: { children: ReactNode }) {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: imageAccept,
+    disabled,
     noClick: true,
     noKeyboard: true,
     onDropAccepted,

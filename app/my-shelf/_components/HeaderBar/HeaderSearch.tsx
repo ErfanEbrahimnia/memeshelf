@@ -4,7 +4,12 @@ import { Search } from "lucide-react";
 
 import { Input } from "@/components/ui/Input";
 
-export function HeaderSearch() {
+type HeaderSearchProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
+
+export function HeaderSearch({ value, onChange }: HeaderSearchProps) {
   return (
     <form
       className="relative w-full"
@@ -18,6 +23,8 @@ export function HeaderSearch() {
       <Input
         type="search"
         name="q"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
         placeholder="Search memes"
         className="h-11 rounded-full border-border/60 bg-muted/50 pl-11 shadow-none focus-visible:bg-background"
         aria-label="Search memes"
