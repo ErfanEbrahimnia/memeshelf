@@ -1,7 +1,7 @@
 "use client";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CloudUpload, Upload } from "lucide-react";
+import { CloudUpload } from "lucide-react";
 import { useCallback, type DragEvent, type ReactNode } from "react";
 import { useDropzone } from "react-dropzone";
 
@@ -40,11 +40,13 @@ export function FullscreenDropzone({ children }: { children: ReactNode }) {
       <input {...getInputProps()} />
       {isDragActive ? (
         <div
-          className="pointer-events-none absolute inset-0 z-50 flex items-center justify-center bg-blue-300/50"
+          className="pointer-events-none fixed inset-0 z-100 flex items-end justify-center bg-blue-300/50"
           role="presentation"
         >
-          <Alert className="relative w-full flex flex-col items-center justify-center max-w-md text-center border-3 border-sky-500 border-dashed bg-transparent py-4">
-            <CloudUpload aria-hidden className="size-14 mb-3 text-sky-500!" />
+          <Alert className="relative bottom-16 w-full flex flex-col items-center justify-center max-w-md text-center border py-4 animate-in slide-in-from-bottom-full duration-200">
+            <div className="animate-pulse rounded-full bg-sky-500/10 p-2 size-20 flex items-center justify-center">
+              <CloudUpload aria-hidden className="size-14 text-sky-500!" />
+            </div>
             <AlertTitle className="text-lg font-semibold text-sky-500">
               Drop images to upload
             </AlertTitle>
