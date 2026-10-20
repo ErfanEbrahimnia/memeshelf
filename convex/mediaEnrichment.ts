@@ -2,6 +2,7 @@ import { v } from "convex/values";
 
 import { internalMutation, internalQuery } from "./_generated/server";
 import { processingStatusValidator } from "./lib/mediaValidators";
+import { createMediaSlug } from "./lib/mediaSlug";
 import { normalizeSearchText, normalizeTags } from "./lib/mediaSearchText";
 
 const enrichmentContextValidator = v.object({
@@ -66,6 +67,7 @@ export const applyEnrichment = internalMutation({
   args: {
     mediaId: v.id("media"),
     caption: v.string(),
+    title: v.string(),
     tags: v.array(v.string()),
   },
   returns: v.null(),
@@ -77,8 +79,18 @@ export const applyEnrichment = internalMutation({
     }
 
     const caption = args.caption.trim();
+    const title = args.title.trim();
     const tags = normalizeTags(args.tags);
-    const searchText = normalizeSearchText(media.originalName, caption);
+    const fallbackTitle = media.originalName.replace(/\.[^.]+$/, "");
+    const resolvedTitle = (
+      title.length > 0 ? title : caption.length > 0 ? caption : fallbackTitle
+    ).slice(0, 200);
+    const slug = createMediaSlug(resolvedTitle);
+    const searchText = normalizeSearchText(
+      media.originalName,
+      caption,
+      resolvedTitle
+    );
 
     const existingTags = ctx.db
       .query("mediaTags")
@@ -98,6 +110,8 @@ export const applyEnrichment = internalMutation({
 
     await ctx.db.patch("media", args.mediaId, {
       caption: caption.length > 0 ? caption : undefined,
+      title: resolvedTitle,
+      slug,
       searchText,
       processingStatus: "ready",
       processingError: undefined,

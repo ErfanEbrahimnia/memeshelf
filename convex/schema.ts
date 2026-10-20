@@ -22,6 +22,8 @@ export default defineSchema({
     source: mediaSourceValidator,
     processingStatus: processingStatusValidator,
     caption: v.optional(v.string()),
+    title: v.optional(v.string()),
+    slug: v.optional(v.string()),
     searchText: v.string(),
     processingError: v.optional(v.string()),
     updatedAt: v.number(),
@@ -29,6 +31,7 @@ export default defineSchema({
     .index("by_owner", ["ownerId"])
     .index("by_owner_and_status", ["ownerId", "processingStatus"])
     .index("by_owner_and_sha256", ["ownerId", "sha256"])
+    .index("by_slug", ["slug"])
     .searchIndex("search_text", {
       searchField: "searchText",
       filterFields: ["ownerId", "processingStatus"],

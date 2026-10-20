@@ -58,6 +58,7 @@ export const enrich = internalAction({
         },
         instructions:
           "You label meme images for a personal library. Be concise and literal. " +
+          "Title: short display name (roughly 3–8 words), no quotes, suitable for a page heading. " +
           "Caption: one sentence, no quotes. Tags: 3–10 short lowercase phrases.",
         messages: [
           {
@@ -78,13 +79,14 @@ export const enrich = internalAction({
         output: Output.object({
           schema: memeMetadataSchema,
           name: "meme_metadata",
-          description: "Caption and tags for a meme image",
+          description: "Title, caption, and tags for a meme image",
         }),
       });
 
       await ctx.runMutation(internal.mediaEnrichment.applyEnrichment, {
         mediaId: args.mediaId,
         caption: output.caption,
+        title: output.title,
         tags: output.tags,
       });
     } catch (error) {
@@ -102,11 +104,17 @@ export const enrich = internalAction({
 });
 
 const memeMetadataSchema = jsonSchema<{
+  title: string;
   caption: string;
   tags: string[];
 }>({
   type: "object",
   properties: {
+    title: {
+      type: "string",
+      description:
+        "Short human-readable name for the meme, used as a page title.",
+    },
     caption: {
       type: "string",
       description:
@@ -119,6 +127,6 @@ const memeMetadataSchema = jsonSchema<{
         "Lowercase topical tags (meme format, subjects, mood). No hashtags.",
     },
   },
-  required: ["caption", "tags"],
+  required: ["title", "caption", "tags"],
   additionalProperties: false,
 });
