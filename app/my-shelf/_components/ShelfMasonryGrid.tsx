@@ -8,6 +8,8 @@ export type ShelfImageItem = {
   src: string;
   width: number;
   height: number;
+  isProcessing?: boolean;
+  processingFailed?: boolean;
 };
 
 type ShelfMasonryGridProps = {
@@ -53,12 +55,30 @@ export function ShelfMasonryGrid({
           Promise.resolve({ width: item.width, height: item.height })
         }
         renderItem={(item) => (
-          <img
-            alt=""
-            className="block h-auto w-full rounded-lg"
-            loading="lazy"
-            src={item.src}
-          />
+          <div className="relative">
+            <img
+              alt=""
+              className={`block h-auto w-full rounded-lg ${
+                item.isProcessing ? "opacity-80" : ""
+              }`}
+              loading="lazy"
+              src={item.src}
+            />
+            {item.isProcessing ? (
+              <span
+                className="absolute right-2 top-2 rounded-md bg-background/80 px-2 py-0.5 text-xs text-muted-foreground backdrop-blur-sm"
+              >
+                Labeling…
+              </span>
+            ) : null}
+            {item.processingFailed ? (
+              <span
+                className="absolute right-2 top-2 rounded-md bg-destructive/90 px-2 py-0.5 text-xs text-destructive-foreground"
+              >
+                Labeling failed
+              </span>
+            ) : null}
+          </div>
         )}
       />
       {canLoadMore ? (

@@ -2,17 +2,10 @@ import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
-const mediaSource = v.union(
-  v.object({ kind: v.literal("upload") }),
-  v.object({ kind: v.literal("url"), url: v.string() }),
-);
-
-const processingStatus = v.union(
-  v.literal("pending"),
-  v.literal("processing"),
-  v.literal("ready"),
-  v.literal("failed"),
-);
+import {
+  mediaSourceValidator,
+  processingStatusValidator,
+} from "./lib/mediaValidators";
 
 export default defineSchema({
   ...authTables,
@@ -26,8 +19,8 @@ export default defineSchema({
     sha256: v.string(),
     width: v.number(),
     height: v.number(),
-    source: mediaSource,
-    processingStatus,
+    source: mediaSourceValidator,
+    processingStatus: processingStatusValidator,
     caption: v.optional(v.string()),
     searchText: v.string(),
     processingError: v.optional(v.string()),

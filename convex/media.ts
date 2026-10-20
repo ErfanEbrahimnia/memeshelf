@@ -4,9 +4,15 @@ import {
 } from "convex/server";
 import { v } from "convex/values";
 
+import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { requireAuthUser } from "./lib/auth";
+import {
+  mediaSourceValidator,
+  processingStatusValidator,
+} from "./lib/mediaValidators";
+import { normalizeSearchText } from "./lib/mediaSearchText";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 
@@ -17,18 +23,6 @@ const ALLOWED_CONTENT_TYPES = new Set([
   "image/webp",
 ]);
 
-const mediaSourceValidator = v.union(
-  v.object({ kind: v.literal("upload") }),
-  v.object({ kind: v.literal("url"), url: v.string() })
-);
-
-const processingStatusValidator = v.union(
-  v.literal("pending"),
-  v.literal("processing"),
-  v.literal("ready"),
-  v.literal("failed")
-);
-
 const shelfItemValidator = v.object({
   _id: v.id("media"),
   url: v.union(v.string(), v.null()),
@@ -37,11 +31,6 @@ const shelfItemValidator = v.object({
   originalName: v.string(),
   processingStatus: processingStatusValidator,
 });
-
-function normalizeSearchText(originalName: string, caption?: string) {
-  const parts = [originalName.replace(/\.[^.]+$/, ""), caption].filter(Boolean);
-  return parts.join(" ").trim().toLowerCase();
-}
 
 async function toShelfItem(
   ctx: { storage: { getUrl: (id: Id<"_storage">) => Promise<string | null> } },
@@ -116,7 +105,7 @@ export const finalizeUpload = mutation({
     const now = Date.now();
     const searchText = normalizeSearchText(args.originalName);
 
-    return await ctx.db.insert("media", {
+    const mediaId = await ctx.db.insert("media", {
       ownerId: user._id,
       storageId: args.storageId,
       originalName: args.originalName,
@@ -126,10 +115,16 @@ export const finalizeUpload = mutation({
       width: args.width,
       height: args.height,
       source: args.source,
-      processingStatus: "ready",
+      processingStatus: "pending",
       searchText,
       updatedAt: now,
     });
+
+    await ctx.scheduler.runAfter(0, internal.mediaEnrichmentNode.enrich, {
+      mediaId,
+    });
+
+    return mediaId;
   },
 });
 
@@ -164,10 +159,16 @@ export const listShelf = query({
 
     const result = await ctx.db
       .query("media")
-      .withIndex("by_owner_and_status", (q) =>
-        q.eq("ownerId", user._id).eq("processingStatus", "ready")
-      )
+      .withIndex("by_owner", (q) => q.eq("ownerId", user._id))
       .order("desc")
+      .filter((q) =>
+        q.or(
+          q.eq(q.field("processingStatus"), "ready"),
+          q.eq(q.field("processingStatus"), "pending"),
+          q.eq(q.field("processingStatus"), "processing"),
+          q.eq(q.field("processingStatus"), "failed")
+        )
+      )
       .paginate(args.paginationOpts);
 
     return {

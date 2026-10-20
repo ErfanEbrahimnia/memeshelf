@@ -11,7 +11,11 @@
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
 import type * as lib_auth from "../lib/auth.js";
+import type * as lib_mediaSearchText from "../lib/mediaSearchText.js";
+import type * as lib_mediaValidators from "../lib/mediaValidators.js";
 import type * as media from "../media.js";
+import type * as mediaEnrichment from "../mediaEnrichment.js";
+import type * as mediaEnrichmentNode from "../mediaEnrichmentNode.js";
 import type * as users from "../users.js";
 
 import type {
@@ -24,7 +28,11 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   http: typeof http;
   "lib/auth": typeof lib_auth;
+  "lib/mediaSearchText": typeof lib_mediaSearchText;
+  "lib/mediaValidators": typeof lib_mediaValidators;
   media: typeof media;
+  mediaEnrichment: typeof mediaEnrichment;
+  mediaEnrichmentNode: typeof mediaEnrichmentNode;
   users: typeof users;
 }>;
 

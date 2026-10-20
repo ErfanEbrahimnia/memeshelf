@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "./globals.css";
 import { ThemeProvider } from "@/app/_components/ThemeProvider";
+import { Toaster } from "@/components/ui/Toast";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           defaultTheme="system"
         >
           <NuqsAdapter>{children}</NuqsAdapter>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
