@@ -31,6 +31,7 @@ export default function MediaDetailPage({ params }: MediaDetailPageProps) {
         <Button
           type="button"
           variant="outline"
+          nativeButton={false}
           render={<Link href="/my-shelf" />}
         >
           Back to shelf
