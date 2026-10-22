@@ -16,12 +16,7 @@ import { normalizeSearchText } from "./lib/mediaSearchText";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 
-const ALLOWED_CONTENT_TYPES = new Set([
-  "image/gif",
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-]);
+const ALLOWED_CONTENT_TYPES = new Set(["image/webp", "image/gif"]);
 
 const shelfItemValidator = v.object({
   _id: v.id("media"),
@@ -93,7 +88,7 @@ export const finalizeUpload = mutation({
 
     if (!ALLOWED_CONTENT_TYPES.has(contentType)) {
       await ctx.storage.delete(args.storageId);
-      throw new Error("Only image uploads are supported");
+      throw new Error("Only WebP images and GIFs are supported");
     }
 
     if (metadata.size > MAX_BYTES) {
@@ -136,11 +131,7 @@ export const finalizeUpload = mutation({
       updatedAt: now,
     });
 
-    await ctx.scheduler.runAfter(0, internal.mediaEnrichmentNode.enrich, {
-      mediaId,
-    });
-
-    await ctx.scheduler.runAfter(0, internal.mediaThumbnailNode.generate, {
+    await ctx.scheduler.runAfter(0, internal.mediaProcessingNode.process, {
       mediaId,
     });
 

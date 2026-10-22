@@ -7,7 +7,7 @@ import { normalizeSearchText, normalizeTags } from "./lib/mediaSearchText";
 
 const enrichmentContextValidator = v.object({
   originalName: v.string(),
-  contentType: v.string(),
+  imageContentType: v.string(),
   processingStatus: processingStatusValidator,
   imageUrl: v.union(v.string(), v.null()),
 });
@@ -22,11 +22,13 @@ export const getEnrichmentContext = internalQuery({
       return null;
     }
 
-    const imageUrl = await ctx.storage.getUrl(media.storageId);
+    const thumbnailStorageId = media.thumbnailStorageId;
+    const visionStorageId = thumbnailStorageId ?? media.storageId;
+    const imageUrl = await ctx.storage.getUrl(visionStorageId);
 
     return {
       originalName: media.originalName,
-      contentType: media.contentType,
+      imageContentType: thumbnailStorageId ? "image/webp" : media.contentType,
       processingStatus: media.processingStatus,
       imageUrl,
     };
