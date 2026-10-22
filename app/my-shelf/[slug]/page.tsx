@@ -18,10 +18,14 @@ type MediaDetailPageProps = {
 export default function MediaDetailPage({ params }: MediaDetailPageProps) {
   const { slug } = use(params);
   const media = useQuery(api.media.getBySlug, { slug });
-  const { deleteMedia, isDeleting } = useDeleteMedia();
+  const { deleteMedia, isDeleting, removedByUser } = useDeleteMedia();
 
   if (media === undefined) {
     return <MediaDetailSkeleton />;
+  }
+
+  if (media === null && removedByUser) {
+    return null;
   }
 
   if (media === null) {
@@ -165,6 +169,7 @@ function useDeleteMedia() {
   const router = useRouter();
   const removeMedia = useMutation(api.media.remove);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [removedByUser, setRemovedByUser] = useState(false);
 
   const deleteMedia = useCallback(
     async (mediaId: Id<"media">) => {
@@ -181,11 +186,13 @@ function useDeleteMedia() {
       }
 
       setIsDeleting(true);
+      setRemovedByUser(true);
+      router.replace("/my-shelf");
 
       try {
         await removeMedia({ mediaId });
-        router.push("/my-shelf");
       } catch (error) {
+        setRemovedByUser(false);
         toast.add({
           type: "error",
           title: "Delete failed",
@@ -201,5 +208,5 @@ function useDeleteMedia() {
     [removeMedia, router]
   );
 
-  return { deleteMedia, isDeleting };
+  return { deleteMedia, isDeleting, removedByUser };
 }

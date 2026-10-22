@@ -1,17 +1,16 @@
 "use node";
 
-import { createGateway, generateText, jsonSchema, Output } from "ai";
 import sharp from "sharp";
 import { v } from "convex/values";
 
 import { internal } from "./_generated/api";
 import type { ActionCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
-import { env, internalAction } from "./_generated/server";
+import { internalAction } from "./_generated/server";
+import { generateMemeMetadata } from "./lib/memeEnrichmentAi";
 
 const THUMBNAIL_MAX_WIDTH = 480;
 const WEBP_QUALITY = 80;
-const DEFAULT_MODEL = "google/gemini-3.5-flash-lite";
 
 export const process = internalAction({
   args: { mediaId: v.id("media") },
@@ -96,41 +95,10 @@ async function enrichMedia(ctx: ActionCtx, mediaId: Id<"media">): Promise<void> 
   }
 
   try {
-    const gateway = createGateway({
-      apiKey: env.AI_GATEWAY_API_KEY,
-    });
-    const { output } = await generateText({
-      model: gateway(DEFAULT_MODEL),
-      providerOptions: {
-        gateway: {
-          has: ["vision", "structured-output"],
-        },
-      },
-      instructions:
-        "You label meme images for a personal library. Be concise and literal. " +
-        "Title: short display name (roughly 3–8 words), no quotes, suitable for a page heading. " +
-        "Caption: one sentence, no quotes. Tags: 3–10 short lowercase phrases.",
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: `Original filename: ${context.originalName}`,
-            },
-            {
-              type: "file",
-              mediaType: context.imageContentType,
-              data: context.imageUrl,
-            },
-          ],
-        },
-      ],
-      output: Output.object({
-        schema: memeMetadataSchema,
-        name: "meme_metadata",
-        description: "Title, caption, and tags for a meme image",
-      }),
+    const output = await generateMemeMetadata({
+      originalName: context.originalName,
+      imageContentType: context.imageContentType,
+      imageUrl: context.imageUrl,
     });
 
     await ctx.runMutation(internal.mediaEnrichment.applyEnrichment, {
@@ -150,30 +118,3 @@ async function enrichMedia(ctx: ActionCtx, mediaId: Id<"media">): Promise<void> 
   }
 }
 
-const memeMetadataSchema = jsonSchema<{
-  title: string;
-  caption: string;
-  tags: string[];
-}>({
-  type: "object",
-  properties: {
-    title: {
-      type: "string",
-      description:
-        "Short human-readable name for the meme, used as a page title.",
-    },
-    caption: {
-      type: "string",
-      description:
-        "Short plain-language description of the meme image for search.",
-    },
-    tags: {
-      type: "array",
-      items: { type: "string" },
-      description:
-        "Lowercase topical tags (meme format, subjects, mood). No hashtags.",
-    },
-  },
-  required: ["title", "caption", "tags"],
-  additionalProperties: false,
-});

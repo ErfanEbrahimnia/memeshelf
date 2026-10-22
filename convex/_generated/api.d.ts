@@ -14,6 +14,7 @@ import type * as lib_auth from "../lib/auth.js";
 import type * as lib_mediaSearchText from "../lib/mediaSearchText.js";
 import type * as lib_mediaSlug from "../lib/mediaSlug.js";
 import type * as lib_mediaValidators from "../lib/mediaValidators.js";
+import type * as lib_memeEnrichmentAi from "../lib/memeEnrichmentAi.js";
 import type * as media from "../media.js";
 import type * as mediaEnrichment from "../mediaEnrichment.js";
 import type * as mediaProcessingNode from "../mediaProcessingNode.js";
@@ -33,6 +34,7 @@ declare const fullApi: ApiFromModules<{
   "lib/mediaSearchText": typeof lib_mediaSearchText;
   "lib/mediaSlug": typeof lib_mediaSlug;
   "lib/mediaValidators": typeof lib_mediaValidators;
+  "lib/memeEnrichmentAi": typeof lib_memeEnrichmentAi;
   media: typeof media;
   mediaEnrichment: typeof mediaEnrichment;
   mediaProcessingNode: typeof mediaProcessingNode;
