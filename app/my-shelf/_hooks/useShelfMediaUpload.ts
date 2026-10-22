@@ -2,6 +2,7 @@
 
 import { api } from "@/convex/_generated/api";
 import { toast } from "@/components/ui/Toast";
+import { prepareImageForUpload } from "@/lib/media/prepareImageForUpload";
 import { uploadMediaFile } from "@/lib/media/uploadMediaFile";
 import { useMutation } from "convex/react";
 import PQueue from "p-queue";
@@ -36,12 +37,14 @@ export function useShelfMediaUpload() {
       const queue = new PQueue({ concurrency: UPLOAD_CONCURRENCY });
       const uploadPromise = queue.addAll(
         files.map(
-          (file) => () =>
-            uploadMediaFile(
-              file,
+          (file) => async () => {
+            const prepared = await prepareImageForUpload(file);
+            await uploadMediaFile(
+              prepared,
               () => generateUploadUrl(),
               (args) => finalizeUpload(args)
-            )
+            );
+          }
         )
       );
 
