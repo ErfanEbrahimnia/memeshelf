@@ -3,12 +3,14 @@ const MAX_TAGS = 16;
 export function normalizeSearchText(
   originalName: string,
   caption?: string,
-  title?: string
+  title?: string,
+  tags?: string[]
 ) {
   const parts = [
     title,
     originalName.replace(/\.[^.]+$/, ""),
     caption,
+    ...(tags ?? []),
   ].filter(Boolean);
   return parts.join(" ").trim().toLowerCase();
 }

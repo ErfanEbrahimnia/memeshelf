@@ -91,7 +91,8 @@ export const applyEnrichment = internalMutation({
     const searchText = normalizeSearchText(
       media.originalName,
       caption,
-      resolvedTitle
+      resolvedTitle,
+      tags
     );
 
     const existingTags = ctx.db
