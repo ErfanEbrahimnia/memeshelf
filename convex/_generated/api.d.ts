@@ -17,6 +17,8 @@ import type * as lib_mediaValidators from "../lib/mediaValidators.js";
 import type * as media from "../media.js";
 import type * as mediaEnrichment from "../mediaEnrichment.js";
 import type * as mediaEnrichmentNode from "../mediaEnrichmentNode.js";
+import type * as mediaThumbnail from "../mediaThumbnail.js";
+import type * as mediaThumbnailNode from "../mediaThumbnailNode.js";
 import type * as users from "../users.js";
 
 import type {
@@ -35,6 +37,8 @@ declare const fullApi: ApiFromModules<{
   media: typeof media;
   mediaEnrichment: typeof mediaEnrichment;
   mediaEnrichmentNode: typeof mediaEnrichmentNode;
+  mediaThumbnail: typeof mediaThumbnail;
+  mediaThumbnailNode: typeof mediaThumbnailNode;
   users: typeof users;
 }>;
 

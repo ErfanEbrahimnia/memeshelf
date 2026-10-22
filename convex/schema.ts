@@ -13,6 +13,7 @@ export default defineSchema({
   media: defineTable({
     ownerId: v.id("users"),
     storageId: v.id("_storage"),
+    thumbnailStorageId: v.optional(v.id("_storage")),
     originalName: v.string(),
     contentType: v.string(),
     size: v.number(),

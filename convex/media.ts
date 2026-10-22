@@ -49,7 +49,8 @@ async function toShelfItem(
   ctx: { storage: { getUrl: (id: Id<"_storage">) => Promise<string | null> } },
   doc: Doc<"media">
 ) {
-  const url = await ctx.storage.getUrl(doc.storageId);
+  const storageId = doc.thumbnailStorageId ?? doc.storageId;
+  const url = await ctx.storage.getUrl(storageId);
   return {
     _id: doc._id,
     url,
@@ -136,6 +137,10 @@ export const finalizeUpload = mutation({
     });
 
     await ctx.scheduler.runAfter(0, internal.mediaEnrichmentNode.enrich, {
+      mediaId,
+    });
+
+    await ctx.scheduler.runAfter(0, internal.mediaThumbnailNode.generate, {
       mediaId,
     });
 
@@ -256,6 +261,10 @@ export const remove = mutation({
 
     for await (const tag of mediaTags) {
       await ctx.db.delete("mediaTags", tag._id);
+    }
+
+    if (media.thumbnailStorageId) {
+      await ctx.storage.delete(media.thumbnailStorageId);
     }
 
     await ctx.storage.delete(media.storageId);
