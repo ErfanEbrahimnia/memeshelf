@@ -1,6 +1,6 @@
 "use client";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/Alert";
 import { CloudUpload } from "lucide-react";
 import { useCallback, type DragEvent, type ReactNode } from "react";
 import { useDropzone } from "react-dropzone";

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import Link from "next/link";
 import { MasonryGrid } from "react-masonry-virtualized";
 
 export type ShelfImageItem = {
@@ -8,6 +9,7 @@ export type ShelfImageItem = {
   src: string;
   width: number;
   height: number;
+  slug?: string;
   isProcessing?: boolean;
   processingFailed?: boolean;
 };
@@ -54,8 +56,27 @@ export function ShelfMasonryGrid({
         getItemSize={(item) =>
           Promise.resolve({ width: item.width, height: item.height })
         }
-        renderItem={(item) => (
-          <div className="relative">
+        renderItem={(item) => {
+          const overlays = (
+            <>
+              {item.isProcessing ? (
+                <span
+                  className="absolute right-2 top-2 rounded-md bg-background/80 px-2 py-0.5 text-xs text-muted-foreground backdrop-blur-sm"
+                >
+                  Labeling…
+                </span>
+              ) : null}
+              {item.processingFailed ? (
+                <span
+                  className="absolute right-2 top-2 rounded-md bg-destructive/90 px-2 py-0.5 text-xs text-destructive-foreground"
+                >
+                  Labeling failed
+                </span>
+              ) : null}
+            </>
+          );
+
+          const image = (
             <img
               alt=""
               className={`block h-auto w-full rounded-lg ${
@@ -64,22 +85,22 @@ export function ShelfMasonryGrid({
               loading="lazy"
               src={item.src}
             />
-            {item.isProcessing ? (
-              <span
-                className="absolute right-2 top-2 rounded-md bg-background/80 px-2 py-0.5 text-xs text-muted-foreground backdrop-blur-sm"
+          );
+
+          if (item.slug) {
+            return (
+              <Link
+                href={`/my-shelf/${item.slug}`}
+                className="relative block rounded-lg outline-none ring-offset-background transition hover:opacity-95 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
-                Labeling…
-              </span>
-            ) : null}
-            {item.processingFailed ? (
-              <span
-                className="absolute right-2 top-2 rounded-md bg-destructive/90 px-2 py-0.5 text-xs text-destructive-foreground"
-              >
-                Labeling failed
-              </span>
-            ) : null}
-          </div>
-        )}
+                {image}
+                {overlays}
+              </Link>
+            );
+          }
+
+          return <div className="relative">{image}{overlays}</div>;
+        }}
       />
       {canLoadMore ? (
         <div className="flex justify-center pb-4">

@@ -6,7 +6,7 @@ import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { env, internalAction } from "./_generated/server";
 
-const DEFAULT_MODEL = "google/gemini-2.5-flash";
+const DEFAULT_MODEL = "google/gemini-3.5-flash-lite";
 
 export const enrich = internalAction({
   args: { mediaId: v.id("media") },

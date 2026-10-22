@@ -29,7 +29,20 @@ const shelfItemValidator = v.object({
   width: v.number(),
   height: v.number(),
   originalName: v.string(),
+  title: v.optional(v.string()),
+  slug: v.optional(v.string()),
   processingStatus: processingStatusValidator,
+});
+
+const mediaDetailValidator = v.object({
+  _id: v.id("media"),
+  url: v.union(v.string(), v.null()),
+  width: v.number(),
+  height: v.number(),
+  title: v.optional(v.string()),
+  caption: v.optional(v.string()),
+  slug: v.string(),
+  tags: v.array(v.string()),
 });
 
 async function toShelfItem(
@@ -43,6 +56,8 @@ async function toShelfItem(
     width: doc.width,
     height: doc.height,
     originalName: doc.originalName,
+    title: doc.title,
+    slug: doc.slug,
     processingStatus: doc.processingStatus,
   };
 }
@@ -174,6 +189,52 @@ export const listShelf = query({
     return {
       ...result,
       page: await Promise.all(result.page.map((doc) => toShelfItem(ctx, doc))),
+    };
+  },
+});
+
+export const getBySlug = query({
+  args: { slug: v.string() },
+  returns: v.union(mediaDetailValidator, v.null()),
+  handler: async (ctx, args) => {
+    const user = await requireAuthUser(ctx);
+    const slug = args.slug;
+
+    if (!slug) {
+      return null;
+    }
+
+    const media = await ctx.db
+      .query("media")
+      .withIndex("by_slug", (q) => q.eq("slug", slug))
+      .unique();
+
+    if (!media || media.ownerId !== user._id || !media.slug) {
+      return null;
+    }
+
+    const tags: string[] = [];
+    const tagRows = ctx.db
+      .query("mediaTags")
+      .withIndex("by_media", (q) => q.eq("mediaId", media._id));
+
+    for await (const row of tagRows) {
+      tags.push(row.tag);
+    }
+
+    tags.sort((a, b) => a.localeCompare(b));
+
+    const url = await ctx.storage.getUrl(media.storageId);
+
+    return {
+      _id: media._id,
+      url,
+      width: media.width,
+      height: media.height,
+      title: media.title,
+      caption: media.caption,
+      slug: media.slug,
+      tags,
     };
   },
 });

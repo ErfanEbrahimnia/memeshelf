@@ -33,6 +33,7 @@ export default function MyShelfPage() {
           src: item.url!,
           width: item.width,
           height: item.height,
+          slug: item.slug,
           isProcessing:
             item.processingStatus === "pending" ||
             item.processingStatus === "processing",
