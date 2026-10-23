@@ -20,7 +20,11 @@
     ],
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "types": [
+      "@types/dom-chromium-installation-events",
+      "@types/web-app-manifest"
+    ]
   },
   "include": [
     "next-env.d.ts",

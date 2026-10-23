@@ -13,11 +13,11 @@ export function HeaderBar({ search, onSearchChange }: HeaderBarProps) {
       <div className="relative mx-auto flex w-full items-center px-4 py-5 sm:px-6">
         <Link
           href="/"
-          className="shrink-0 text-lg font-semibold tracking-tight text-foreground"
+          className="hidden shrink-0 text-lg font-semibold tracking-tight text-foreground sm:inline"
         >
           MemeShelf
         </Link>
-        <div className="flex items-center justify-center w-full ml-12 mr-4">
+        <div className="flex w-full items-center justify-center mr-4 sm:ml-12">
           <div className="pointer-events-auto w-full">
             <HeaderSearch value={search} onChange={onSearchChange} />
           </div>
