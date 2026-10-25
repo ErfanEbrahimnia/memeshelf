@@ -150,7 +150,7 @@ export function UploadDialog({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Upload images</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-pretty">
               PNG, JPG, GIF, and other image formats are supported.
               {!showPasteButton ? (
                 <>
@@ -171,7 +171,7 @@ export function UploadDialog({
           <div
             {...getRootProps({
               className: cn(
-                "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-border p-8 text-center transition-colors",
+                "flex min-w-0 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border p-4 text-center transition-colors sm:gap-3 sm:p-8",
                 "hover:border-primary/40 hover:bg-muted/40",
                 isDragActive && "border-sky-500 bg-sky-500/10",
                 disabled && "pointer-events-none opacity-50"
@@ -190,10 +190,10 @@ export function UploadDialog({
             </p>
           </div>
 
-          <DialogFooter className="flex-col gap-2 sm:flex-col">
+          <DialogFooter className="min-w-0 flex-col gap-2 sm:flex-col">
             <Button
               type="button"
-              className="w-full"
+              className="w-full min-w-0"
               disabled={disabled}
               onClick={() => openFileDialog()}
             >
@@ -203,7 +203,7 @@ export function UploadDialog({
               <Button
                 type="button"
                 variant="outline"
-                className="w-full"
+                className="w-full min-w-0 whitespace-normal"
                 disabled={disabled || isPasting}
                 onPointerDown={onPastePointerDown}
                 onClick={onPasteFromClipboard}
@@ -212,7 +212,7 @@ export function UploadDialog({
                 {isPasting ? "Pasting…" : "Paste from clipboard"}
               </Button>
             ) : null}
-            <DialogClose variant="outline" className="w-full">
+            <DialogClose variant="outline" className="w-full min-w-0">
               Cancel
             </DialogClose>
           </DialogFooter>
