@@ -1,12 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
-import Link from "next/link";
 import { MasonryGrid } from "react-masonry-virtualized";
+
+import { ShelfMasonryTile } from "./ShelfMasonryTile";
 
 export type ShelfImageItem = {
   id: string;
   src: string;
+  fullSrc?: string;
   width: number;
   height: number;
   slug?: string;
@@ -56,51 +58,7 @@ export function ShelfMasonryGrid({
         getItemSize={(item) =>
           Promise.resolve({ width: item.width, height: item.height })
         }
-        renderItem={(item) => {
-          const overlays = (
-            <>
-              {item.isProcessing ? (
-                <span
-                  className="absolute right-2 top-2 rounded-md bg-background/80 px-2 py-0.5 text-xs text-muted-foreground backdrop-blur-sm"
-                >
-                  Labeling…
-                </span>
-              ) : null}
-              {item.processingFailed ? (
-                <span
-                  className="absolute right-2 top-2 rounded-md bg-destructive/90 px-2 py-0.5 text-xs text-destructive-foreground"
-                >
-                  Labeling failed
-                </span>
-              ) : null}
-            </>
-          );
-
-          const image = (
-            <img
-              alt=""
-              className={`block h-auto w-full rounded-lg ${
-                item.isProcessing ? "opacity-80" : ""
-              }`}
-              loading="lazy"
-              src={item.src}
-            />
-          );
-
-          if (item.slug) {
-            return (
-              <Link
-                href={`/my-shelf/${item.slug}`}
-                className="relative block rounded-lg outline-none ring-offset-background transition hover:opacity-95 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              >
-                {image}
-                {overlays}
-              </Link>
-            );
-          }
-
-          return <div className="relative">{image}{overlays}</div>;
-        }}
+        renderItem={(item) => <ShelfMasonryTile item={item} />}
       />
       {canLoadMore ? (
         <div className="flex justify-center pb-4">

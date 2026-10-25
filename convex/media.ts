@@ -21,6 +21,7 @@ const ALLOWED_CONTENT_TYPES = new Set(["image/webp", "image/gif"]);
 const shelfItemValidator = v.object({
   _id: v.id("media"),
   url: v.union(v.string(), v.null()),
+  fullUrl: v.union(v.string(), v.null()),
   width: v.number(),
   height: v.number(),
   originalName: v.string(),
@@ -46,9 +47,11 @@ async function toShelfItem(
 ) {
   const storageId = doc.thumbnailStorageId ?? doc.storageId;
   const url = await ctx.storage.getUrl(storageId);
+  const fullUrl = await ctx.storage.getUrl(doc.storageId);
   return {
     _id: doc._id,
     url,
+    fullUrl,
     width: doc.width,
     height: doc.height,
     originalName: doc.originalName,

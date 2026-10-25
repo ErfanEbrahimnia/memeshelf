@@ -1,0 +1,13 @@
+@keyframes long-press-copy-grow {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.5);
+  }
+}
+
+.long-press-copy-icon-grow {
+  animation: long-press-copy-grow var(--long-press-grow-duration) linear forwards;
+}

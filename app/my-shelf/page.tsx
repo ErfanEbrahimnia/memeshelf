@@ -31,6 +31,7 @@ export default function MyShelfPage() {
         .map((item) => ({
           id: item._id,
           src: item.url!,
+          fullSrc: item.fullUrl ?? item.url!,
           width: item.width,
           height: item.height,
           slug: item.slug,
