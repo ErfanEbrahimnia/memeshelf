@@ -5,6 +5,8 @@ import { useCopyShelfImage } from "@/app/my-shelf/_hooks/useCopyShelfImage";
 import { useLongPress } from "@/app/my-shelf/_hooks/useLongPress";
 import { Copy } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSyncExternalStore } from "react";
 
 import { LongPressCopyIndicator } from "./LongPressCopyIndicator/LongPressCopyIndicator";
 import type { ShelfImageItem } from "./ShelfMasonryGrid";
@@ -13,7 +15,21 @@ type ShelfMasonryTileProps = {
   item: ShelfImageItem;
 };
 
+function useIsMinMd() {
+  return useSyncExternalStore(
+    (onStoreChange) => {
+      const mediaQueryList = window.matchMedia("(min-width: 768px)");
+      mediaQueryList.addEventListener("change", onStoreChange);
+      return () => mediaQueryList.removeEventListener("change", onStoreChange);
+    },
+    () => window.matchMedia("(min-width: 768px)").matches,
+    () => false
+  );
+}
+
 export function ShelfMasonryTile({ item }: ShelfMasonryTileProps) {
+  const isDesktop = useIsMinMd();
+  const router = useRouter();
   const imageUrl = item.fullSrc ?? item.src;
   const { copyImage } = useCopyShelfImage(imageUrl);
   const {
@@ -21,6 +37,7 @@ export function ShelfMasonryTile({ item }: ShelfMasonryTileProps) {
     indicatorGrowDurationMs,
     longPressTouchHandlers,
     onNavigateClick,
+    shouldBlockNavigation,
   } = useLongPress({
     onLongPress: () => void copyImage(),
   });
@@ -84,16 +101,46 @@ export function ShelfMasonryTile({ item }: ShelfMasonryTileProps) {
     "group relative block rounded-lg outline-none ring-offset-background transition hover:opacity-95 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2";
 
   if (item.slug) {
+    const detailHref = `/my-shelf/${item.slug}`;
+    const imageTarget = isDesktop ? (
+      <Link
+        href={detailHref}
+        className="block rounded-lg"
+        onClick={onNavigateClick}
+        {...longPressTouchHandlers}
+      >
+        {image}
+      </Link>
+    ) : (
+      <div
+        className="block cursor-pointer rounded-lg"
+        role="button"
+        tabIndex={0}
+        onClick={() => {
+          if (shouldBlockNavigation()) {
+            return;
+          }
+          router.push(detailHref);
+        }}
+        onKeyDown={(event) => {
+          if (event.key !== "Enter" && event.key !== " ") {
+            return;
+          }
+          event.preventDefault();
+          if (shouldBlockNavigation()) {
+            return;
+          }
+          router.push(detailHref);
+        }}
+        {...longPressTouchHandlers}
+      >
+        {image}
+      </div>
+    );
+
     return (
       <div className={shellClassName}>
-        <Link
-          href={`/my-shelf/${item.slug}`}
-          className="block rounded-lg"
-          onClick={onNavigateClick}
-          {...longPressTouchHandlers}
-        >
-          {image}
-        </Link>
+        {imageTarget}
         {overlays}
         {longPressIndicator}
         {copyButton}

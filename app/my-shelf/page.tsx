@@ -11,6 +11,7 @@ import { HeaderBar } from "./_components/HeaderBar/HeaderBar";
 import { ShelfMasonryGrid } from "./_components/ShelfMasonryGrid";
 import { UploadDialog } from "./_components/UploadDialog";
 import { useMediaPaste } from "./_hooks/useMediaPaste";
+import { useShareTargetUpload } from "./_hooks/useShareTargetUpload";
 import { useShelfMediaUpload } from "./_hooks/useShelfMediaUpload";
 
 export default function MyShelfPage() {
@@ -18,6 +19,7 @@ export default function MyShelfPage() {
   const debouncedSearch = useDebounce(search.trim(), 250);
   const { isUploading, onUploadFiles } = useShelfMediaUpload();
   useMediaPaste({ onUploadFiles, disabled: isUploading });
+  useShareTargetUpload({ onUploadFiles, disabled: isUploading });
 
   const { results, status, loadMore } = usePaginatedQuery(
     api.media.listShelf,

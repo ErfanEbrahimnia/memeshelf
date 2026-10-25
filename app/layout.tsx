@@ -1,4 +1,5 @@
 import { PwaInstall } from "@/app/_components/PwaInstall";
+import { ShareTargetServiceWorker } from "@/app/_components/ShareTargetServiceWorker";
 import { ThemeProvider } from "@/app/_components/ThemeProvider";
 import { ConfirmationRoot } from "@/components/ui/Confirm";
 import { Toaster } from "@/components/ui/Toast";
@@ -75,6 +76,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           <NuqsAdapter>{children}</NuqsAdapter>
           <PwaInstall />
+          <ShareTargetServiceWorker />
           <ConfirmationRoot />
           <Toaster />
         </ThemeProvider>

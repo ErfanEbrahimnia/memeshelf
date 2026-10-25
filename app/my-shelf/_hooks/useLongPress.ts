@@ -68,14 +68,21 @@ export function useLongPress({
 
   const onTouchMove = cancelPress;
 
+  const shouldBlockNavigation = useCallback(() => {
+    if (longPressTriggeredRef.current) {
+      longPressTriggeredRef.current = false;
+      return true;
+    }
+    return false;
+  }, []);
+
   const onNavigateClick = useCallback(
-    (event: MouseEvent<HTMLAnchorElement>) => {
-      if (longPressTriggeredRef.current) {
+    (event: MouseEvent<HTMLElement>) => {
+      if (shouldBlockNavigation()) {
         event.preventDefault();
-        longPressTriggeredRef.current = false;
       }
     },
-    []
+    [shouldBlockNavigation]
   );
 
   const longPressTouchHandlers = {
@@ -95,5 +102,6 @@ export function useLongPress({
     indicatorGrowDurationMs,
     longPressTouchHandlers,
     onNavigateClick,
+    shouldBlockNavigation,
   };
 }
