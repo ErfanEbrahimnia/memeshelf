@@ -46,6 +46,15 @@ export function supportsOneClickClipboardImagePaste(): boolean {
   return navigator.maxTouchPoints > 0 && "ontouchstart" in window;
 }
 
+export function isAppleTouchDevice(): boolean {
+  if (typeof navigator === "undefined") {
+    return false;
+  }
+  return (
+    /iPhone|iPad|iPod/i.test(navigator.userAgent) && navigator.maxTouchPoints > 0
+  );
+}
+
 export function keyboardPasteShortcutLabel(): string {
   if (typeof navigator === "undefined") {
     return "Ctrl+V";
@@ -54,9 +63,21 @@ export function keyboardPasteShortcutLabel(): string {
   return isApple ? "⌘V" : "Ctrl+V";
 }
 
-/** Call on `pointerdown` so `clipboard.read()` keeps the user gesture (Safari). */
+/** Call on `pointerdown` so `clipboard.read()` keeps the user gesture (desktop Safari). */
 export function startClipboardItemsRead(): Promise<ClipboardItem[]> | null {
   return navigator.clipboard?.read() ?? null;
+}
+
+/**
+ * Desktop Safari loses the user gesture before `click` if `read()` is not started
+ * early. iOS rejects `read()` started on `pointerdown`/`touchstart` with
+ * NotAllowedError, so touch devices must start the read in `click` instead.
+ */
+export function shouldPrefetchClipboardReadOnPointerDown(): boolean {
+  if (typeof window === "undefined") {
+    return false;
+  }
+  return window.matchMedia("(pointer: fine)").matches;
 }
 
 async function imageFilesFromClipboardItems(
@@ -86,6 +107,11 @@ export async function readClipboardImageFiles(
   try {
     items = await itemsPromise;
   } catch (error) {
+    if (error instanceof DOMException && error.name === "NotAllowedError") {
+      throw new Error(
+        "Paste was blocked. On iPhone and iPad, tap this button again and choose Paste in the bar that appears at the top of the screen."
+      );
+    }
     throw new Error(
       error instanceof Error ? error.message : "Could not read the clipboard"
     );

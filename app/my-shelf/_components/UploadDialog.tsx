@@ -12,8 +12,10 @@ import {
 } from "@/components/ui/Dialog";
 import { toast } from "@/components/ui/Toast";
 import {
+  isAppleTouchDevice,
   keyboardPasteShortcutLabel,
   readClipboardImageFiles,
+  shouldPrefetchClipboardReadOnPointerDown,
   startClipboardItemsRead,
   supportsOneClickClipboardImagePaste,
 } from "@/lib/media/clipboardImages";
@@ -72,7 +74,12 @@ export function UploadDialog({
   );
 
   const onPastePointerDown = useCallback(() => {
-    if (disabled || isPasting || clipboardItemsReadRef.current) {
+    if (
+      !shouldPrefetchClipboardReadOnPointerDown() ||
+      disabled ||
+      isPasting ||
+      clipboardItemsReadRef.current
+    ) {
       return;
     }
     clipboardItemsReadRef.current = startClipboardItemsRead();
@@ -150,6 +157,12 @@ export function UploadDialog({
                   {" "}
                   You can also paste from your clipboard with {pasteShortcut}{" "}
                   anywhere on this page.
+                </>
+              ) : isAppleTouchDevice() ? (
+                <>
+                  {" "}
+                  Tap Paste from clipboard below, then tap Paste in the bar at
+                  the top of the screen.
                 </>
               ) : null}
             </DialogDescription>
