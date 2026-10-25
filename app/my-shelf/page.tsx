@@ -9,12 +9,15 @@ import { useMemo } from "react";
 import { FullscreenDropzone } from "./_components/FullscreenDropzone";
 import { HeaderBar } from "./_components/HeaderBar/HeaderBar";
 import { ShelfMasonryGrid } from "./_components/ShelfMasonryGrid";
+import { UploadDialog } from "./_components/UploadDialog";
+import { useMediaPaste } from "./_hooks/useMediaPaste";
 import { useShelfMediaUpload } from "./_hooks/useShelfMediaUpload";
 
 export default function MyShelfPage() {
   const [search, setSearch] = useQueryState("q", parseAsString.withDefault(""));
   const debouncedSearch = useDebounce(search.trim(), 250);
   const { isUploading, onUploadFiles } = useShelfMediaUpload();
+  useMediaPaste({ onUploadFiles, disabled: isUploading });
 
   const { results, status, loadMore } = usePaginatedQuery(
     api.media.listShelf,
@@ -55,6 +58,7 @@ export default function MyShelfPage() {
           onLoadMore={() => loadMore(24)}
         />
       </main>
+      <UploadDialog onUploadFiles={onUploadFiles} disabled={isUploading} />
     </FullscreenDropzone>
   );
 }

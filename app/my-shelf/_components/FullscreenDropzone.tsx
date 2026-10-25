@@ -5,9 +5,7 @@ import { CloudUpload } from "lucide-react";
 import { useCallback, type DragEvent, type ReactNode } from "react";
 import { useDropzone } from "react-dropzone";
 
-const imageAccept = {
-  "image/*": [],
-};
+import { dropzoneConfig } from "../_lib/dropzoneConfig";
 
 type FullscreenDropzoneProps = {
   children: ReactNode;
@@ -38,7 +36,7 @@ export function FullscreenDropzone({
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: imageAccept,
+    accept: dropzoneConfig.accept,
     disabled,
     noClick: true,
     noKeyboard: true,
